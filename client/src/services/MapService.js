@@ -7,11 +7,14 @@ class MapService {
         ? new naver.maps.LatLng(initialPosition.latitude, initialPosition.longitude)
         : new naver.maps.LatLng(37.5666805, 126.9784147),
       zoom: 14,
+      zoomControl: false,
+      /* 필터 버튼 UI 밀림 때문에 비활성화
       zoomControl: true,
       zoomControlOptions: {
         position: naver.maps.Position.TOP_RIGHT,
         style: naver.maps.ZoomControlStyle.SMALL
       },
+      */
       smoothZoom: true,
       zoomDuration: 200,
       transition: true,

@@ -101,7 +101,7 @@
 }
 
 .user-type-button.active {
-  color: #FFB800;
+  color: #A7CCEB; /* 색 수정 */
 }
 
 .user-type-button.active .icon-circle {

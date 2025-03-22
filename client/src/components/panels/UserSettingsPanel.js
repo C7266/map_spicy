@@ -58,7 +58,7 @@ const UserSettingsPanel = ({ onModeChange, selectedMode = '일반' }) => {
             >
               <div className="icon-circle">
                 <img 
-                  src="/images/panel/human-male-yellow.svg" 
+                  src="/images/panel/human-male-blue.svg" // 색 변경
                   alt="일반"
                   className="mode-icon"
                 />
@@ -72,7 +72,7 @@ const UserSettingsPanel = ({ onModeChange, selectedMode = '일반' }) => {
             >
               <div className="icon-circle">
                 <img 
-                  src="/images/panel/human-female-yellow.svg" 
+                  src="/images/panel/human-female-blue.svg" // 색 변경
                   alt="여성"
                   className="mode-icon"
                 />
@@ -86,7 +86,7 @@ const UserSettingsPanel = ({ onModeChange, selectedMode = '일반' }) => {
             >
               <div className="icon-circle">
                 <img 
-                  src="/images/panel/human-wheelchair-yellow.svg" 
+                  src="/images/panel/human-wheelchair-blue.svg" // 색 변경
                   alt="노약자"
                   className="mode-icon"
                 />

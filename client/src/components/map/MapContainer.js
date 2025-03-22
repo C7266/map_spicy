@@ -102,7 +102,7 @@ const MapContainer = ({
             />
           </div>
 
-          {/* 메뉴 버튼 */}
+          {/** 메뉴 버튼
           <button 
             className="menu-button" 
             style={{ 
@@ -122,14 +122,15 @@ const MapContainer = ({
           >
             ≡
           </button>
+          */}
 
-          {/* 검색 력창 */}
+          {/* 검색 입력창 */}
           <div 
             onClick={() => onEditDestination()} // 도착지 검색 열기
             style={{
               flex: 1,
               cursor: 'pointer',
-              height: '100%',
+              height: '70%',
               display: 'flex',
               alignItems: 'center'
             }}
@@ -153,8 +154,7 @@ const MapContainer = ({
           {/* 음성 검색 버튼 */}
           <div style={{
             display: 'flex',
-            alignItems: 'center',
-            marginLeft: '8px'
+            alignItems: 'center'
           }}>
             <img 
               src="/images/search_bar/mike.svg" 
