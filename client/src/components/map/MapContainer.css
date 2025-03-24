@@ -46,7 +46,8 @@
 /* 검색바 스타일 */
 .search-bar {
   position: fixed;
-  top: 0;
+  /* 반응형 디자인만 상단 여백이 있어 추가 */
+  top: 1vh;
   left: 0;
   right: 0;
   width: 100%;
@@ -54,7 +55,7 @@
   margin: 0;
   z-index: 1001;
   background: #597BEB;
-  border-radius: 30px;
+  border-radius: 10px;
   box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   display: flex;
   align-items: center;
@@ -87,10 +88,10 @@
   flex: 1;
   border: none;
   background: none;
-  padding: 8px 0;
+  padding: 6px 0;
   font-size: 16px;
   background-color: white;
-  border-radius: 30px;
+  border-radius: 8px;
 
 }
 
@@ -100,8 +101,9 @@
 
 /* 필터 버튼 스타일 */
 .filter-buttons-container {
-  position: fixed;
-  top: 44px;
+  /* search bar의 위치에 맞게 배치 */
+  position: absolute;
+  top: calc(44px + 1vh + 20px);
   left: 0;
   right: 0;
   z-index: 1001;
@@ -149,7 +151,7 @@
   padding: 10px 16px;
   background: #A7CCEB;
   border: 1px solid #ddd;
-  border-radius: 20px;
+  border-radius: 10px;
   white-space: nowrap;
   font-size: 14px;
   flex-shrink: 0;
@@ -160,7 +162,14 @@
 }
 
 .filter-button-icon {
-  font-size: 16px;
+  /* 불필요한 font-size 제거 */
+  background-color: #597BEB;
+  border-radius: 30px;
+  padding: 2px;
+}
+
+.filter-button-text {
+  color: #e9ecef;
 }
 
 /* 지도 컨테이너 */
@@ -201,7 +210,7 @@
 
   .search-input {
     font-size: 14px;
-    padding-left: 12px; /* 기존보다 더 오른쪽으로 */
+    padding-left: 14px; /* 기존보다 더 오른쪽으로 */
   }
 
   .search-icon,
@@ -275,5 +284,15 @@
     width: calc(100% - 12px);
     margin: 0 6px;
     height: 36px;
+  }
+  /* 화면 width 375 미만에서 filter button이 멀어지는 현상 수정 */
+  .filter-buttons-container {
+    position: absolute;
+    top: calc(44px + 1vh + 10px);
+    left: 0;
+    right: 0;
+    z-index: 1001;
+    padding: 8px 16px;
+    width: 100%;
   }
 }   
