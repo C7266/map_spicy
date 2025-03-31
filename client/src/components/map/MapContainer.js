@@ -157,9 +157,10 @@ const MapContainer = ({
             alignItems: 'center'
           }}>
             <img 
-              src="/images/search_bar/mike.svg" 
-              alt="음성 검색" 
-              className="voice-icon"
+              // 불필요한 음성인식 아이콘 건의 아이콘으로 변경
+              src="/images/search_bar/sent.svg"
+              alt="건의 전송" 
+              className="sent-icon"
               style={{ 
                 width: '24px',
                 height: '24px',
@@ -168,7 +169,7 @@ const MapContainer = ({
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                // 음성 검색 기능 구현 시 여기에 추가
+                // 건의 기능 구현 시 여기에 추가
               }}
             />
           </div>

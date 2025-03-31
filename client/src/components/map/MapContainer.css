@@ -69,7 +69,7 @@
   margin-right: 12px;
 }
 
-.voice-icon {
+.sent-icon {
   width: 24px;
   height: 24px;
   cursor: pointer;
@@ -163,13 +163,14 @@
 
 .filter-button-icon {
   /* 불필요한 font-size 제거 */
-  background-color: #597BEB;
+  background-color: white;
   border-radius: 30px;
   padding: 2px;
 }
 
 .filter-button-text {
-  color: #e9ecef;
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 /* 지도 컨테이너 */
@@ -214,7 +215,7 @@
   }
 
   .search-icon,
-  .voice-icon,
+  .sent-icon,
   .menu-icon {
     width: 20px;
     height: 20px;

@@ -89,7 +89,16 @@ const SearchScreen = ({ onClose, onNavigate, isStartLocation = false }) => {
     <div className="search-screen">
       <div className="search-header">
         <button className="back-button" onClick={onClose}>
-          ←
+          <img
+            src="/images/search_bar/back.png"
+            alt="back-arrow"
+            className="back-icon"
+            style={{
+              width: '24px',
+              height: '24px',
+              objectFit: 'contain'
+            }}
+          />
         </button>
         <div className="search-input-container">
           <img
@@ -119,22 +128,6 @@ const SearchScreen = ({ onClose, onNavigate, isStartLocation = false }) => {
               ✕
             </button>
           )}
-          <img
-            src="/images/search_bar/mike.svg"
-            alt="음성 검색"
-            className="voice-icon"
-            style={{
-              width: '24px',
-              height: '24px',
-              cursor: 'pointer',
-              padding: '8px',
-              marginLeft: '8px'
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              // 음성 검색 기능 구현 시 여기에 추가
-            }}
-          />
         </div>
       </div>
 

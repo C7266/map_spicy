@@ -1,109 +1,53 @@
-// src/components/panels/UserSettingsPanel.js
-import React, { useState, useRef } from 'react';
-import PropTypes from 'prop-types';
+// src/components/UserSettingsPanel.js
+import React, { useState } from 'react';
 import './UserSettingsPanel.css';
 
-const UserSettingsPanel = ({ onModeChange, selectedMode = '일반' }) => {
-  const [isPanelOpen, setIsPanelOpen] = useState(false);
-  const panelRef = useRef(null);
+const UserSettingsPanel = ({ selectedMode, onModeChange }) => {
+  const [isOpen, setIsOpen] = useState(false);
 
-  // 패널 클릭 시 토글
-  const handlePanelClick = () => {
-    setIsPanelOpen(!isPanelOpen);
-  };
+  const buttons = [
+    { text: '일반', icon: '/images/panel/human-male-blue.svg' },
+    { text: '여성', icon: '/images/panel/human-female-blue.svg' },
+    { text: '노약자', icon: '/images/panel/human-wheelchair-blue.svg' },
+  ];
 
-  // 터치 이벤트 처리
-  const handleTouchStart = (e) => {
-    const touch = e.touches[0];
-    const startY = touch.clientY;
-
-    const handleTouchMove = (e) => {
-      const currentY = e.touches[0].clientY;
-      const deltaY = startY - currentY;
-
-      if (deltaY > 50) { // 위로 스와이프
-        setIsPanelOpen(true);
-      } else if (deltaY < -50) { // 아래로 스와이프
-        setIsPanelOpen(false);
-      }
-    };
-
-    const handleTouchEnd = () => {
-      document.removeEventListener('touchmove', handleTouchMove);
-      document.removeEventListener('touchend', handleTouchEnd);
-    };
-
-    document.addEventListener('touchmove', handleTouchMove);
-    document.addEventListener('touchend', handleTouchEnd);
+  const handleClick = (mode) => {
+    onModeChange(mode);
+    setIsOpen(false); // 아이콘 클릭 시 리스트 닫기
   };
 
   return (
-    <div 
-      className={`settings-panel ${isPanelOpen ? 'open' : ''}`}
-      ref={panelRef}
-      onClick={handlePanelClick}
-      onTouchStart={handleTouchStart}
-    >
-      <div className="panel-header">
-        <div className="drag-handle" />
-        <span className="panel-title">사용자 맞춤 설정</span>
-      </div>
-      <div className="panel-content">
-        <div className="settings-section">
-          <div className="user-type-buttons">
-            <button 
+    <div className="setting-panel">
+      <button
+        className="setting-toggle-button"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        ≡
+      </button>
+
+      {isOpen && (
+        <div className="setting-button-list">
+          {buttons.map((btn) => (
+            <button
+              key={btn.text}
               type="button"
-              className={`user-type-button ${selectedMode === '일반' ? 'active' : ''}`}
-              onClick={() => onModeChange('일반')}
+              className={`setting-button ${selectedMode === btn.text ? 'active' : ''}`}
+              onClick={() => handleClick(btn.text)}
             >
               <div className="icon-circle">
-                <img 
-                  src="/images/panel/human-male-blue.svg" // 색 변경
-                  alt="일반"
+                <img
+                  src={btn.icon}
+                  alt={btn.text}
                   className="mode-icon"
                 />
               </div>
-              <span>일반</span>
+              <span>{btn.text}</span>
             </button>
-            <button 
-              type="button"
-              className={`user-type-button ${selectedMode === '여성' ? 'active' : ''}`}
-              onClick={() => onModeChange('여성')}
-            >
-              <div className="icon-circle">
-                <img 
-                  src="/images/panel/human-female-blue.svg" // 색 변경
-                  alt="여성"
-                  className="mode-icon"
-                />
-              </div>
-              <span>여성</span>
-            </button>
-            <button 
-              type="button"
-              className={`user-type-button ${selectedMode === '노약자' ? 'active' : ''}`}
-              onClick={() => onModeChange('노약자')}
-            >
-              <div className="icon-circle">
-                <img 
-                  src="/images/panel/human-wheelchair-blue.svg" // 색 변경
-                  alt="노약자"
-                  className="mode-icon"
-                />
-              </div>
-              <span>노약자</span>
-            </button>
-          </div>
+          ))}
         </div>
-      </div>
+      )}
     </div>
   );
-};
-
-
-UserSettingsPanel.propTypes = {
-  onModeChange: PropTypes.func.isRequired,
-  selectedMode: PropTypes.string
 };
 
 export default UserSettingsPanel;
