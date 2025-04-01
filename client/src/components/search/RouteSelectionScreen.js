@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import MapService from '../../services/MapService';
 import RouteService from '../../services/RouteService';
 import RouteInfoPanel from '../panels/RouteInfoPanel';
+import VisiblePanel from '../panels/VisiblePanel';
 import './RouteSelectionScreen.css';
 
 const RouteSelectionScreen = ({
@@ -19,6 +20,13 @@ const RouteSelectionScreen = ({
   const mapRef = useRef(null);
   const mapServiceRef = useRef(null);
   const routeServiceRef = useRef(null);
+  const [visibleItems, setVisibleItems] = useState(['cctv', 'store']);
+
+  const handleToggleVisible = (key) => {
+    setVisibleItems(prev =>
+      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
+    );
+  };
 
   const drawRoute = useCallback(async () => {
     if (!routeServiceRef.current || !startLocation || !destination) return;
@@ -26,14 +34,15 @@ const RouteSelectionScreen = ({
       const result = await routeServiceRef.current.drawRoute(
         startLocation.coords,
         destination.coords,
-        routeType
+        routeType,
+        visibleItems
       );
       setRouteInfo(result);
     } catch (error) {
       console.error('경로 그리기 실패:', error);
       setRouteInfo({ error: '경로를 찾을 수 없습니다.' });
     }
-  }, [startLocation, destination, routeType]);
+  }, [startLocation, destination, routeType, visibleItems]);
 
   useEffect(() => {
     if (mapRef.current) {
@@ -55,7 +64,7 @@ const RouteSelectionScreen = ({
 
   useEffect(() => {
     drawRoute();
-  }, [startLocation, destination, routeType, drawRoute]);
+  }, [startLocation, destination, routeType, visibleItems, drawRoute]);
 
   const formatDistance = (meters) => {
     if (meters < 1000) return `${meters}m`;
@@ -135,8 +144,15 @@ const RouteSelectionScreen = ({
             formatDistance={formatDistance}
             formatTime={formatTime}
           />
+
+          <VisiblePanel
+            visibleItems={visibleItems}
+            onToggle={handleToggleVisible}
+          />
         </>
       )}
+
+      
     </div>
   );
 };

@@ -62,7 +62,7 @@ class RouteService {
     }
   }
 
-  async drawRoute(startCoords, goalCoords, routeType) {
+  async drawRoute(startCoords, goalCoords, routeType, visibleItems = []) {
     try {
       this.clearMap();
 
@@ -139,10 +139,10 @@ class RouteService {
         this.mapInstance.fitBounds(bounds);
 
         if (routeType === 'safe') {
-          if (result.data.nearbyCCTVs && result.data.nearbyCCTVs.length > 0) {
+          if (visibleItems.includes('cctv') && result.data.nearbyCCTVs?.length > 0) {
             this.displayCCTVMarkers(result.data.nearbyCCTVs);
           }
-          if (result.data.nearbyStores && result.data.nearbyStores.length > 0) {
+          if (visibleItems.includes('store') && result.data.nearbyStores?.length > 0) {
             this.displayStoreMarkers(result.data.nearbyStores);
           }
         }
