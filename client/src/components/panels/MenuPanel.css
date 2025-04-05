@@ -1,0 +1,70 @@
+/* MenuPanel.css */
+
+.menu-panel {
+    position: fixed;
+    top: 0;
+    box-sizing: border-box;
+    right: -45%;
+    width: 45%;
+    height: 100%;
+    background-color: #fff;
+    box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+    z-index: 2000;
+    transition: right 0.3s ease-in-out;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+  }
+  
+  .menu-panel.open {
+    right: 0; /* 열릴 때 화면 안쪽으로 */
+  }
+  
+  .menu-panel h2 {
+    font-size: 20px;
+    margin-bottom: 16px;
+    color: #333;
+  }
+  
+  .menu-panel ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+  }
+  
+  .menu-panel li {
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    color: #444;
+    font-size: 16px;
+    transition: background 0.2s;
+  }
+  
+  .menu-panel li:hover {
+    background-color: #f5f5f5;
+  }
+  
+  .menu-panel button.close-button {
+    align-self: flex-end;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    margin-bottom: 12px;
+    color: #999;
+    transition: color 0.2s;
+  }
+  
+  .menu-panel button.close-button:hover {
+    color: #333;
+  }
+  
+
+  @media (min-width: 800px) {
+    .menu-panel{
+      right: -350px;
+      width: 350px;
+    }
+  }   

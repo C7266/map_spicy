@@ -1,6 +1,7 @@
 // src/components/map/MapContainer.js
 import React, { useState } from 'react';
 import NaverMap from './NaverMap';
+import MenuPanel from '../panels/MenuPanel'; // Menu기능 추가
 import './MapContainer.css';
 
 // filterButtons 정의
@@ -45,6 +46,9 @@ const MapContainer = ({
   startLocation
 }) => {
   const [activeFilters, setActiveFilters] = useState([]);
+  const [isMenuOpen, setIsMenuOpen] = useState(false); // 메뉴 열림 기능 추가
+
+  const toggleMenu = () => setIsMenuOpen(prev => !prev); // 
 
   const handleFilterClick = (filterText) => {
     console.log('Filter clicked:', filterText);
@@ -73,6 +77,7 @@ const MapContainer = ({
         background: 'transparent',
         pointerEvents: 'auto'
       }}>
+
         {/* 검색바 */}
         <div className="search-bar" style={{
           width: '100%',  // 전체 너비 사용
@@ -102,27 +107,6 @@ const MapContainer = ({
             />
           </div>
 
-          {/** 메뉴 버튼
-          <button 
-            className="menu-button" 
-            style={{ 
-              border: 'none', 
-              background: 'none', 
-              cursor: 'pointer',
-              fontSize: '24px',
-              padding: '8px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              // 메뉴 클릭 핸들러 추가
-            }}
-          >
-            ≡
-          </button>
-          */}
 
           {/* 검색 입력창 */}
           <div 
@@ -151,28 +135,26 @@ const MapContainer = ({
             />
           </div>
 
-          {/* 음성 검색 버튼 */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center'
-          }}>
-            <img 
-              // 불필요한 음성인식 아이콘 건의 아이콘으로 변경
-              src="/images/search_bar/sent.svg"
-              alt="건의 전송" 
-              className="sent-icon"
-              style={{ 
-                width: '24px',
-                height: '24px',
-                cursor: 'pointer',
-                padding: '8px'
-              }}
-              onClick={(e) => {
-                e.stopPropagation();
-                // 건의 기능 구현 시 여기에 추가
-              }}
-            />
-          </div>
+          {/* ≡ 메뉴 버튼으로 변경 */}
+          <button 
+            className="menu-button"
+            style={{
+              width: '32px',
+              height: '32px',
+              fontSize: '20px',
+              border: 'none',
+              background: 'white',
+              borderRadius: '8px',
+              marginLeft: '8px',
+              cursor: 'pointer'
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleMenu(); // 메뉴 열고 닫기
+            }}
+          >
+            ≡
+          </button>
         </div>
         
         {/* 필터 버튼 */}
@@ -212,6 +194,10 @@ const MapContainer = ({
           startLocation={startLocation}
         />
       </div>
+
+      {/* 메뉴 패널 삽입 */}
+      <MenuPanel isOpen={isMenuOpen} onClose={toggleMenu} />
+
     </div>
   );
 };

@@ -2,14 +2,8 @@
 import React, { useState } from 'react';
 import './VisiblePanel.css';
 
-const VisiblePanel = ({ visibleItems = [], onToggle }) => {
+const VisiblePanel = ({ visibleItems = [], onToggle, items = [] }) => {
   const [isOpen, setIsOpen] = useState(false);
-
-  // 후에 다른 유저 세팅에 맞춰서 변경하는 기능도 추가.
-  const items = [
-    { key: 'cctv', label: 'CCTV', icon: '/images/icon/women/cctv.png' },
-    { key: 'store', label: '편의점', icon: '/images/icon/women/store.png' },
-  ];
 
   const handleToggle = (key) => {
     onToggle(key);
@@ -40,7 +34,7 @@ const VisiblePanel = ({ visibleItems = [], onToggle }) => {
               <div className="icon-circle">
                 <img
                   src={item.icon}
-                  alt={item.label}
+                  alt={item.key}
                   className="visible-icon"
                 />
               </div>

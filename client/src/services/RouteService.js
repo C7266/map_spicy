@@ -137,7 +137,8 @@ class RouteService {
         });
         
         this.mapInstance.fitBounds(bounds);
-
+        
+        // 나중에 다른 요소들도 화면에 표시되면 다른 경우도 추가할것.
         if (routeType === 'safe') {
           if (visibleItems.includes('cctv') && result.data.nearbyCCTVs?.length > 0) {
             this.displayCCTVMarkers(result.data.nearbyCCTVs);

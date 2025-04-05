@@ -104,6 +104,7 @@ const App = () => {
           onBack={handleRouteBack}
           onStartLocationEdit={handleOpenSearchForStart}
           onDestinationEdit={handleOpenSearchForDestination}
+          selectedMode={selectedMode} // VisiblePanel 아이콘 동적 반영을 위해 추가.
         />
       )}
 

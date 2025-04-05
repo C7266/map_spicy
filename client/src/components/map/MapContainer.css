@@ -56,7 +56,6 @@
   z-index: 1001;
   background: #597BEB;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
   display: flex;
   align-items: center;
   padding: 8px 12px;
@@ -70,19 +69,12 @@
 }
 
 .sent-icon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   cursor: pointer;
+  background-color: white;
+  border-radius: 30px;
 }
-
-/* 현재 제거 상태
-.menu-icon {
-  width: 24px;
-  height: 24px;
-  margin-left: 12px;
-  cursor: pointer;
-}
-*/
 
 .search-input {
   flex: 1;
@@ -149,7 +141,7 @@
   align-items: center;
   gap: 8px;
   padding: 10px 16px;
-  background: #A7CCEB;
+  background: #597BEB;
   border: 1px solid #ddd;
   border-radius: 10px;
   white-space: nowrap;

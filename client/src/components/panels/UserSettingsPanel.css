@@ -1,7 +1,7 @@
 /* 사용자 맞춤 설정 패널 - 우측 상단 고정 */
 .setting-panel {
   position: fixed;
-  top: calc(115px + 1vh);
+  top: calc(130px + 1vh);
   right: 20px;
   z-index: 1002;
   display: flex;
@@ -14,7 +14,7 @@
   width: 35px;
   height: 35px;
   border-radius: 50%;
-  background-color: #597BEB;
+  background-color: white;
   color: white;
   font-size: 24px;
   border: none;
@@ -35,6 +35,13 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
   gap: 6px;
+}
+
+/* 아이콘 디자인 */
+.mode-toggle-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
 }
 
 /* 개별 설정 버튼 */

@@ -16,13 +16,20 @@ const UserSettingsPanel = ({ selectedMode, onModeChange }) => {
     setIsOpen(false); // 아이콘 클릭 시 리스트 닫기
   };
 
+  // 현재 선택된 모드에 맞는 아이콘 경로 가져오기
+  const currentIcon = buttons.find(btn => btn.text === selectedMode)?.icon;
+
   return (
     <div className="setting-panel">
       <button
         className="setting-toggle-button"
         onClick={() => setIsOpen(!isOpen)}
       >
-        ≡
+        <img
+          src={currentIcon}
+          alt={selectedMode}
+          className="mode-toggle-icon"
+        />
       </button>
 
       {isOpen && (
