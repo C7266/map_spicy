@@ -29,10 +29,22 @@ class RouteService {
     this.startMarker = null;
     this.endMarker = null;
   }
+// cctv랑 편의점 토글
+  toggleCCTVMarkers(show) {
+    this.cctvMarkers.forEach(marker => {
+      marker.setMap(show ? this.mapInstance : null);
+    });
+  }
 
+  toggleStoreMarkers(show) {
+    this.storeMarkers.forEach(marker => {
+      marker.setMap(show ? this.mapInstance : null);
+    });
+  }
+// 출발 도착 마커 사이즈 줄임
   calculateMarkerSize = () => {
     const zoom = this.mapInstance.getZoom();
-    const baseSize = 48;
+    const baseSize = 28;
     const scale = Math.max(0.5, Math.min(2, zoom / 12));
     return Math.round(baseSize * scale);
   };
@@ -62,7 +74,7 @@ class RouteService {
     }
   }
 
-  async drawRoute(startCoords, goalCoords, routeType, visibleItems = []) {
+  async drawRoute(startCoords, goalCoords, routeType) {
     try {
       this.clearMap();
 
@@ -137,14 +149,18 @@ class RouteService {
         });
         
         this.mapInstance.fitBounds(bounds);
-        
-        // 나중에 다른 요소들도 화면에 표시되면 다른 경우도 추가할것.
+
+        // 안전 경로일 때 마커 데이터 저장
         if (routeType === 'safe') {
-          if (visibleItems.includes('cctv') && result.data.nearbyCCTVs?.length > 0) {
+          if (result.data.nearbyCCTVs && result.data.nearbyCCTVs.length > 0) {
             this.displayCCTVMarkers(result.data.nearbyCCTVs);
+            // 처음에는 마커 안보이게 함
+            this.toggleCCTVMarkers(false);
           }
-          if (visibleItems.includes('store') && result.data.nearbyStores?.length > 0) {
+          if (result.data.nearbyStores && result.data.nearbyStores.length > 0) {
             this.displayStoreMarkers(result.data.nearbyStores);
+            // 처음에는 마커 안 보이게 함
+            this.toggleStoreMarkers(false);
           }
         }
 
@@ -161,16 +177,16 @@ class RouteService {
       throw error;
     }
   }
-
+// 절반 으로 줄임
   displayCCTVMarkers(cctvData) {
     cctvData.forEach(cctv => {
       const marker = new naver.maps.Marker({
         position: new naver.maps.LatLng(cctv.latitude, cctv.longitude),
         map: this.mapInstance,
-        icon: {
+        icon: { 
           url: '/images/map/direction/CCTV.svg',
-          size: new naver.maps.Size(48, 48),
-          scaledSize: new naver.maps.Size(48, 48),
+          size: new naver.maps.Size(24, 24), 
+          scaledSize: new naver.maps.Size(24, 24), 
           origin: new naver.maps.Point(0, 0),
           anchor: new naver.maps.Point(12, 12)
         }
@@ -210,7 +226,7 @@ class RouteService {
       this.cctvMarkers.push(marker);
     });
   }
-
+// 크기 절반으로 줄임
   displayStoreMarkers(stores) {
     stores.forEach(store => {
       const marker = new naver.maps.Marker({
@@ -218,8 +234,8 @@ class RouteService {
         map: this.mapInstance,
         icon: {
           url: '/images/map/direction/store.svg',
-          size: new naver.maps.Size(48, 48),
-          scaledSize: new naver.maps.Size(48, 48),
+          size: new naver.maps.Size(24, 24),
+          scaledSize: new naver.maps.Size(24, 24),
           origin: new naver.maps.Point(0, 0),
           anchor: new naver.maps.Point(12, 12)
         }
