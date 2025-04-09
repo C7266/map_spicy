@@ -17,6 +17,9 @@ const RouteSelectionScreen = ({
   const [routeType, setRouteType] = useState('normal');
   const [showCCTV, setShowCCTV] = useState(false);
   const [showStores, setShowStores] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [isLocationButtonActive, setIsLocationButtonActive] = useState(false);
+  const watchPositionId = useRef(null);
 
   // 경로 타입이 변경될 때 마커를 모두 숨김
   useEffect(() => {
@@ -75,6 +78,70 @@ const RouteSelectionScreen = ({
     // ESLint 경고 해결: mapRef는 ref이므로 의존성 배열에 포함시키지 않음
   }, [startLocation]);
 
+    // 실시간 위치 추적 기능
+    const startFollowing = useCallback(() => {
+      if (!mapServiceRef.current) return;
+  
+      // 현재 위치로 지도 중심 이동 및 줌
+      if (startLocation?.coords) {
+        mapServiceRef.current.panTo(startLocation.coords);
+        mapServiceRef.current.setZoomLevel(17); // 더 가까운 줌 레벨로 설정
+      }
+  
+      // 위치 추적 시작
+      watchPositionId.current = navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          const newCoords = { latitude, longitude };
+          
+          // 현재 위치 마커 업데이트
+          mapServiceRef.current.updateCurrentLocation(newCoords);
+          
+          // 따라가기 모드가 활성화된 경우에만 지도 중심 이동
+          if (isFollowing) {
+            mapServiceRef.current.panTo(newCoords);
+          }
+        },
+        (error) => {
+          console.error('위치 추적 오류:', error);
+          setIsFollowing(false);
+          alert('위치 추적에 실패했습니다. GPS 신호를 확인해주세요.');
+        },
+        {
+          enableHighAccuracy: true,
+          maximumAge: 1000, // 1초 이내의 캐시된 위치만 사용
+          timeout: 5000
+        }
+      );
+    }, [startLocation, isFollowing]);
+  
+    // 위치 추적 중지
+    const stopFollowing = useCallback(() => {
+      if (watchPositionId.current) {
+        navigator.geolocation.clearWatch(watchPositionId.current);
+        watchPositionId.current = null;
+      }
+    }, []);
+  
+    // 위치 추적 토글
+    const handleFollowToggle = (follow) => {
+      setIsFollowing(follow);
+      if (follow) {
+        startFollowing();
+      } else {
+        stopFollowing();
+      }
+    };
+  
+    // 컴포넌트 언마운트 시 위치 추적 중지
+    useEffect(() => {
+      return () => {
+        if (watchPositionId.current) {
+          navigator.geolocation.clearWatch(watchPositionId.current);
+        }
+      };
+    }, []); 
+
   useEffect(() => {
     drawRoute();
   }, [startLocation, destination, routeType, drawRoute]);
@@ -97,7 +164,11 @@ const RouteSelectionScreen = ({
       <div className="route-header">
         <div className="location-inputs">
           <div className="input-row clickable" onClick={onStartLocationEdit}>
-            <span className="location-icon">⬆️</span>
+            <span className="location-icon">
+              <img
+                src="/images/RouteSelectionScreen/start.png"
+              />
+            </span>
             <input
               type="text"
               placeholder="출발지를 설정하세요"
@@ -110,7 +181,9 @@ const RouteSelectionScreen = ({
             </button>
           </div>
           <div className="input-row clickable" onClick={onDestinationEdit}>
-            <span className="location-icon">⬇️</span>
+            <span className="location-icon">
+              <img src="/images/RouteSelectionScreen/goal.png"/>
+            </span>
             <input
               type="text"
               value={destination ? destination.name : ''}
@@ -158,17 +231,25 @@ const RouteSelectionScreen = ({
             onStoresToggle={toggleStores}
             showCCTV={showCCTV}
             showStores={showStores}
+            onFollowToggle={handleFollowToggle}
+            isFollowing={isFollowing}
           />
 
-          <button // 유저의 현재 위치로 화면 이동. 아직 기능은 구현 X
-            className="move-to-current-button"
+          <button
+            className={`move-to-current-button ${isLocationButtonActive ? 'active' : ''}`}
             onClick={() => {
+              setIsLocationButtonActive(true);
               if (mapServiceRef.current) {
                 mapServiceRef.current.moveToCurrentLocation();
+
+                // 3초 후에 활성화 상태 해제
+                setTimeout(() => {
+                  setIsLocationButtonActive(false);
+                }, 3000);
               }
             }}
           >
-            <img src="/images/RouteSelectionScreen/location.svg " alt="현재 위치로 이동" />
+            <img src="/images/RouteSelectionScreen/location.svg" alt="현재 위치로 이동" />
           </button>
         </>
       )}

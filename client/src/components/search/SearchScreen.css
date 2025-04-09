@@ -15,8 +15,8 @@
   align-items: center;
   padding: 8px 12px;
   gap: 10px; /* 여백 약간 조정 */
-  border-radius: 10px;
-  background-color: #597BEB;
+  background-color: white;
+  border-bottom: 1px solid black;
 }
 
 .back-button {
@@ -28,8 +28,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  width: 36px;
+  height: 16px;
+  width: 21px;
   border-radius: 50%;
   background-color: white;
 }

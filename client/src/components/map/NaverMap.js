@@ -18,14 +18,31 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
   useEffect(() => {
     let isSubscribed = true;
 
+    const waitForNaverMaps = () => {
+      return new Promise((resolve, reject) => {
+        if (window.naver && window.naver.maps) {
+          resolve();
+        } else {
+          const checkCount = { count: 0 };
+          const interval = setInterval(() => {
+            if (window.naver && window.naver.maps) {
+              clearInterval(interval);
+              resolve();
+            } else if (checkCount.count > 20) { // 10초 후에도 로드되지 않으면 에러
+              clearInterval(interval);
+              reject(new Error('Naver Maps API 로드 실패'));
+            }
+            checkCount.count++;
+          }, 500);
+        }
+      });
+    };
+
     const initializeMap = async () => {
       if (!mapRef.current || mapService.current) return;
 
       try {
-        if (!window.naver || !window.naver.maps) {
-          console.error('Naver Maps API is not loaded');
-          return;
-        }
+        await waitForNaverMaps();
 
         // 현재 위치 가져오기
         if (navigator.geolocation) {
@@ -91,7 +108,7 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
         navigator.geolocation.clearWatch(watchPositionId.current);
       }
     };
-  }, []);
+  }, [onCurrentLocationUpdate]);
 
   // 필터 변경 감지 및 마커 업데이트
   useEffect(() => {

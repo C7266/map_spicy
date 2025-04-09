@@ -5,15 +5,26 @@ class RouteService {
     this.markers = [];
     this.cctvMarkers = [];
     this.pathInstance = null;
+    this.pathBorderInstance = null;
     this.storeMarkers = [];
     this.currentInfoWindow = null;
     this.startMarker = null;
     this.endMarker = null;
+
+    // 지도 클릭 시 열려있는 정보 창 닫기
+    naver.maps.Event.addListener(this.mapInstance, 'click', () => {
+      if (this.currentInfoWindow) {
+        this.currentInfoWindow.close();
+      }
+    });
   }
 
   clearMap() {
     if (this.pathInstance) {
       this.pathInstance.setMap(null);
+    }
+    if (this.pathBorderInstance) {
+      this.pathBorderInstance.setMap(null);
     }
     this.markers.forEach(marker => marker.setMap(null));
     this.cctvMarkers.forEach(marker => marker.setMap(null));
@@ -23,8 +34,10 @@ class RouteService {
     this.cctvMarkers = [];
     this.storeMarkers = [];
     
+    // 열려있는 정보 창 닫기
     if (this.currentInfoWindow) {
       this.currentInfoWindow.close();
+      this.currentInfoWindow = null;
     }
     this.startMarker = null;
     this.endMarker = null;
@@ -34,17 +47,27 @@ class RouteService {
     this.cctvMarkers.forEach(marker => {
       marker.setMap(show ? this.mapInstance : null);
     });
+    
+    // 표시하지 않을 때 열려있는 정보 창 닫기
+    if (!show && this.currentInfoWindow) {
+      this.currentInfoWindow.close();
+    }
   }
 
   toggleStoreMarkers(show) {
     this.storeMarkers.forEach(marker => {
       marker.setMap(show ? this.mapInstance : null);
     });
+
+    // 표시하지 않을 때 열려있는 정보 창 닫기
+    if (!show && this.currentInfoWindow) {
+      this.currentInfoWindow.close();
+    }
   }
 // 출발 도착 마커 사이즈 줄임
   calculateMarkerSize = () => {
     const zoom = this.mapInstance.getZoom();
-    const baseSize = 28;
+    const baseSize = 24;
     const scale = Math.max(0.5, Math.min(2, zoom / 12));
     return Math.round(baseSize * scale);
   };
@@ -59,7 +82,7 @@ class RouteService {
         size: new naver.maps.Size(newSize, newSize),
         scaledSize: new naver.maps.Size(newSize, newSize),
         origin: new naver.maps.Point(0, 0),
-        anchor: new naver.maps.Point(newHalf, newHalf)
+        anchor: new naver.maps.Point(newHalf, newHalf * 0.8)
       });
     }
 
@@ -69,7 +92,7 @@ class RouteService {
         size: new naver.maps.Size(newSize, newSize),
         scaledSize: new naver.maps.Size(newSize, newSize),
         origin: new naver.maps.Point(0, 0),
-        anchor: new naver.maps.Point(newHalf, newHalf)
+        anchor: new naver.maps.Point(newHalf, newHalf * 0.8)
       });
     }
   }
@@ -89,8 +112,9 @@ class RouteService {
           size: new naver.maps.Size(initialSize, initialSize),
           scaledSize: new naver.maps.Size(initialSize, initialSize),
           origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(initialHalf, initialHalf)
-        }
+          anchor: new naver.maps.Point(initialHalf, initialHalf * 0.8)
+        },
+        zIndex: 50
       });
 
       this.endMarker = new naver.maps.Marker({
@@ -101,8 +125,9 @@ class RouteService {
           size: new naver.maps.Size(initialSize, initialSize),
           scaledSize: new naver.maps.Size(initialSize, initialSize),
           origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(initialHalf, initialHalf)
-        }
+          anchor: new naver.maps.Point(initialHalf, initialHalf * 0.8)
+        },
+        zIndex: 50
       });
 
       naver.maps.Event.addListener(this.mapInstance, 'zoom_changed', this.updateMarkers);
@@ -136,11 +161,30 @@ class RouteService {
           }
         });
 
+        const path = pathCoordinates.map(coord => new naver.maps.LatLng(coord[1], coord[0]));
+ 
+         // 경로에 테두리 주기
+         this.pathBorderInstance = new naver.maps.Polyline({
+           map: this.mapInstance,
+           path: path,
+           strokeColor: '#000000',
+           strokeWeight: 5,
+           strokeOpacity: 1,
+           strokeLineCap: 'round',
+           strokeLineJoin: 'round',
+           zIndex: 1
+         });
+ 
+         // 메인 경로 그리기
         this.pathInstance = new naver.maps.Polyline({
           map: this.mapInstance,
-          path: pathCoordinates.map(coord => new naver.maps.LatLng(coord[1], coord[0])),
-          strokeColor: '#87CEEB',
-          strokeWeight: 5
+          path: path,
+          strokeColor: '#597BEB',
+          strokeWeight: 3,
+          strokeOpacity: 1,
+          strokeLineCap: 'round',
+          strokeLineJoin: 'round',
+          zIndex: 2
         });
 
         const bounds = new naver.maps.LatLngBounds();
@@ -189,21 +233,22 @@ class RouteService {
           scaledSize: new naver.maps.Size(24, 24), 
           origin: new naver.maps.Point(0, 0),
           anchor: new naver.maps.Point(12, 12)
-        }
+        },
+        zIndex: 30
       });
 
       const infoWindow = new naver.maps.InfoWindow({
         content: `
-          <div style="padding: 10px; min-width: 200px;">
-            <h4 style="margin: 0 0 5px 0;">CCTV 정보</h4>
-            <p style="margin: 5px 0;">카메라 수: ${cctv.cameraCount || 1}대</p>
-            <p style="margin: 5px 0;">설치 목적: ${cctv.purpose || '안전 감시'}</p>
-            <p style="margin: 5px 0; font-size: 12px;">${cctv.address || '주소 정보 없음'}</p>
+          <div style="padding: 10px; min-width: 160px; max-width: 180px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+             <h4 style="margin: 0 0 6px 0; font-size: 14px; color: #333;">CCTV 정보</h4>
+             <p style="margin: 3px 0; font-size: 13px; color: #666;">${cctv.address || '주소 정보 없음'}</p>
+             <p style="margin: 3px 0; font-size: 13px; color: #666;">목적: ${cctv.purpose || '안전 감시'}</p>
+             <p style="margin: 3px 0; font-size: 12px; color: #888;">설치 대수: ${cctv.cameraCount || 1}대</p>
           </div>
         `,
         borderWidth: 0,
         backgroundColor: "white",
-        borderRadius: "8px",
+        borderRadius: "12px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.3)"
       });
 
@@ -238,20 +283,21 @@ class RouteService {
           scaledSize: new naver.maps.Size(24, 24),
           origin: new naver.maps.Point(0, 0),
           anchor: new naver.maps.Point(12, 12)
-        }
+        },
+        zIndex: 30
       });
 
       const infoWindow = new naver.maps.InfoWindow({
         content: `
-          <div style="padding: 10px; min-width: 200px;">
-            <h4 style="margin: 0 0 5px 0;">${store.name || '편의점'}</h4>
-            <p style="margin: 5px 0;">${store.address || '주소 정보 없'}</p>
-            <p style="margin: 5px 0; color: #666;">거리: ${store.distance || '정보 없음'}</p>
+          <div style="padding: 10px; min-width: 160px; max-width: 180px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+            <h4 style="margin: 0 0 6px 0; font-size: 14px; color: #333;">${store.name || '편의점'}</h4>
+            <p style="margin: 3px 0; font-size: 13px; color: #666;">${store.address || '주소 정보 없음'}</p>
+            <p style="margin: 3px 0; font-size: 12px; color: #888;">거리: ${store.distance || '정보 없음'}</p>
           </div>
         `,
         borderWidth: 0,
         backgroundColor: "white",
-        borderRadius: "8px",
+        borderRadius: "12px",
         boxShadow: "0 2px 6px rgba(0,0,0,0.3)"
       });
 

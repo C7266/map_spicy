@@ -2,31 +2,77 @@
 
 class MapService {
   constructor(mapElement, initialPosition = null) {
+    if (!window.naver || !window.naver.maps) {
+      throw new Error('Naver Maps API가 로드되지 않았습니다.');
+    }
     this.mapInstance = new naver.maps.Map(mapElement, {
       center: initialPosition 
         ? new naver.maps.LatLng(initialPosition.latitude, initialPosition.longitude)
         : new naver.maps.LatLng(37.5666805, 126.9784147),
       zoom: 14,
       zoomControl: false,
-      /* 필터 버튼 UI 밀림 때문에 비활성화
-      zoomControl: true,
-      zoomControlOptions: {
-        position: naver.maps.Position.TOP_RIGHT,
-        style: naver.maps.ZoomControlStyle.SMALL
-      },
-      */
       smoothZoom: true,
       zoomDuration: 200,
       transition: true,
       transitionDuration: 1000,
     });
     this.currentLocationMarker = null;
+    this.lastKnownPosition = null;
+     
+    // 현재 위치 마커 아이콘 정의
+    this.currentLocationIcon = {
+      content: `
+        <div style="position: relative; width: 40px; height: 40px;">
+           <!-- 외부 원 (파란색 테두리) -->
+          <div style="
+            position: absolute;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             width: 24px;
+             height: 24px;
+             background: rgba(89, 123, 235, 0.2);
+             border-radius: 50%;
+             animation: pulse 2s infinite;
+           "></div>
+           
+           <!-- 내부 원 (파란색 채움) -->
+           <div style="
+             position: absolute;
+             top: 50%;
+             left: 50%;
+             transform: translate(-50%, -50%);
+             width: 12px;
+             height: 12px;
+             background: #597BEB;
+             border: 2px solid white;
+             border-radius: 50%;
+             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+           "></div>
+         </div>
+
+        <style>
+          @keyframes pulse {
+            0% {
+              transform: translate(-50%, -50%) scale(1);
+              opacity: 1;
+            }
+            100% {
+              transform: translate(-50%, -50%) scale(2);
+              opacity: 0;
+            }
+          }
+        </style>
+      `,
+      anchor: new naver.maps.Point(20, 20)
+    };
 
     naver.maps.Event.addListener(this.mapInstance, 'zoom_changed', () => {
       const zoomLevel = this.mapInstance.getZoom();
       console.log('Current zoom level:', zoomLevel);
     });
 
+    // 초기 위치 설정
     if (!initialPosition && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -34,6 +80,7 @@ class MapService {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
           };
+          this.lastKnownPosition = coords;
           this.setCurrentLocation(coords);
         },
         (error) => {
@@ -52,7 +99,23 @@ class MapService {
     return this.mapInstance;
   }
 
+  updateCurrentLocation(coords) {
+    const position = new naver.maps.LatLng(coords.latitude, coords.longitude);
+    
+    if (!this.currentLocationMarker) {
+      this.currentLocationMarker = new naver.maps.Marker({
+        position: position,
+        map: this.mapInstance,
+        icon: this.currentLocationIcon,
+        zIndex: 100
+      });
+    } else {
+      this.currentLocationMarker.setPosition(position);
+    }
+  }
+
   setCurrentLocation(coords) {
+    this.lastKnownPosition = coords;
     const currentPosition = new naver.maps.LatLng(
       coords.latitude,
       coords.longitude
@@ -67,15 +130,7 @@ class MapService {
     this.currentLocationMarker = new naver.maps.Marker({
       position: currentPosition,
       map: this.mapInstance,
-      icon: {
-        content: `
-          <div style="position: relative;">
-            <div style="width: 20px; height: 20px; background: #4A90E2; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-              <div style="width: 6px; height: 6px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-            </div>
-          </div>`,
-        anchor: new naver.maps.Point(10, 10)
-      },
+      icon: this.currentLocationIcon,
       zIndex: 100
     });
 
@@ -93,6 +148,15 @@ class MapService {
       map: this.mapInstance,
       ...options
     });
+  }
+
+  panTo(coords) {
+    const position = new naver.maps.LatLng(coords.latitude, coords.longitude);
+    this.mapInstance.panTo(position);
+  }
+
+  setZoomLevel(level) {
+    this.mapInstance.setZoom(level);
   }
 
   createPolyline(path, options) {
@@ -129,34 +193,6 @@ class MapService {
     }
   }
 
-  updateCurrentLocation(coords) {
-    const currentPosition = new naver.maps.LatLng(
-      coords.latitude,
-      coords.longitude
-    );
-
-    this.mapInstance.setCenter(currentPosition);
-
-    if (this.currentLocationMarker) {
-      this.currentLocationMarker.setPosition(currentPosition);
-    } else {
-      this.currentLocationMarker = new naver.maps.Marker({
-        position: currentPosition,
-        map: this.mapInstance,
-        icon: {
-          content: `
-            <div style="position: relative;">
-              <div style="width: 20px; height: 20px; background: #4A90E2; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                <div style="width: 6px; height: 6px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-              </div>
-            </div>`,
-          anchor: new naver.maps.Point(10, 10)
-        },
-        zIndex: 100
-      });
-    }
-  }
-
   setZoom(level, useAnimation = true) {
     if (this.mapInstance) {
       if (useAnimation) {
@@ -164,6 +200,43 @@ class MapService {
       } else {
         this.mapInstance.setZoom(level, false);
       }
+    }
+  }
+
+  moveToCurrentLocation() {
+    // 마지막으로 알고 있는 위치가 있으면 즉시 이동
+    if (this.lastKnownPosition) {
+      const position = new naver.maps.LatLng(
+        this.lastKnownPosition.latitude,
+        this.lastKnownPosition.longitude
+      );
+      this.mapInstance.setCenter(position);
+      this.mapInstance.setZoom(17);
+    }
+    
+    // 현재 위치 새로 가져오기
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+          this.lastKnownPosition = coords;
+          this.updateCurrentLocation(coords);
+          
+          const newPosition = new naver.maps.LatLng(coords.latitude, coords.longitude);
+          this.mapInstance.setCenter(newPosition);
+        },
+        (error) => {
+          console.error('현재 위치를 가져올 수 없습니다:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 3000,
+          maximumAge: 0
+        }
+      );
     }
   }
 }

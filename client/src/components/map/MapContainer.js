@@ -80,32 +80,24 @@ const MapContainer = ({
 
         {/* 검색바 */}
         <div className="search-bar" style={{
-          width: '100%',  // 전체 너비 사용
+          width: '90%',
           maxWidth: 'calc(100% - 32px)',  // 양쪽 여백 16px씩
           margin: '0 auto'  // 중앙 정렬
         }}>
-          {/* mapspicy 로고 */}
-          <div 
+          
+          {/* ≡ 메뉴 버튼으로 변경 */}
+          <button 
+            className="menu-button"
             style={{
-              width: '40px',
-              height: '40px',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              cursor: 'pointer',
-              marginRight: '8px'
+              cursor: 'pointer'
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleMenu(); // 메뉴 열고 닫기
             }}
           >
-            <img 
-              src="/images/search_bar/mapspicy.png" 
-              alt="mapspicy" 
-              style={{ 
-                width: '100%',
-                height: '100%',
-                objectFit: 'contain'
-              }}
-            />
-          </div>
+            ≡
+          </button>
 
 
           {/* 검색 입력창 */}
@@ -134,27 +126,6 @@ const MapContainer = ({
               }}
             />
           </div>
-
-          {/* ≡ 메뉴 버튼으로 변경 */}
-          <button 
-            className="menu-button"
-            style={{
-              width: '32px',
-              height: '32px',
-              fontSize: '20px',
-              border: 'none',
-              background: 'white',
-              borderRadius: '8px',
-              marginLeft: '8px',
-              cursor: 'pointer'
-            }}
-            onClick={(e) => {
-              e.stopPropagation();
-              toggleMenu(); // 메뉴 열고 닫기
-            }}
-          >
-            ≡
-          </button>
         </div>
         
         {/* 필터 버튼 */}
@@ -171,8 +142,8 @@ const MapContainer = ({
                   alt={button.text}
                   className="filter-button-icon"
                   style={{
-                    width: '24px',
-                    height: '24px',
+                    width: '20px',
+                    height: '20px',
                     objectFit: 'contain'
                   }}
                 />

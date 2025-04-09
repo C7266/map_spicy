@@ -1,5 +1,7 @@
 // src/App.js
 import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import SuggestionsPage from './pages/SuggestPage'; // 새 페이지 컴포넌트
 import "./App.css";
 
 /** 컴포넌트 import 경로 변경 */
@@ -72,61 +74,72 @@ const App = () => {
   };
 
   return (
-    <div className="App" style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      width: '100vw',
-      height: '100vh',
-      overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
-      margin: 0,
-      padding: 0,
-      boxSizing: 'border-box'
-    }}>
-      {/* 검색 화면 */}
-      {isSearchOpen && (
-        <SearchScreen
-          onClose={handleSearchClose}
-          onNavigate={handleLocationSelected}
-          isStartLocation={isSearchingStart}
-        />
-      )}
+    <Router>
+      <div className="App" style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        width: '100vw',
+        height: '100vh',
+        overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        margin: 0,
+        padding: 0,
+        boxSizing: 'border-box'
+      }}>
+        <Routes>
+          <Route path="/" element={
+            <>
+              {/* 검색 화면 */}
+              {isSearchOpen && (
+                <SearchScreen
+                  onClose={handleSearchClose}
+                  onNavigate={handleLocationSelected}
+                  isStartLocation={isSearchingStart}
+                />
+              )}
 
-      {/* 경로 선택 화면 */}
-      {destination && !isSearchOpen && (
-        <RouteSelectionScreen
-          startLocation={startLocation}
-          destination={destination}
-          onBack={handleRouteBack}
-          onStartLocationEdit={handleOpenSearchForStart}
-          onDestinationEdit={handleOpenSearchForDestination}
-        />
-      )}
+              {/* 경로 선택 화면 */}
+              {destination && !isSearchOpen && (
+                <RouteSelectionScreen
+                  startLocation={startLocation}
+                  destination={destination}
+                  onBack={handleRouteBack}
+                  onStartLocationEdit={handleOpenSearchForStart}
+                  onDestinationEdit={handleOpenSearchForDestination}
+                />
+              )}
 
-      {/* 지도 화면 (기본 화면) */}
-      {!destination && !isSearchOpen && (
-        <>
-          <MapContainer
-            selectedMode={selectedMode}
-            isSearchOpen={isSearchOpen}
-            setIsSearchOpen={setIsSearchOpen}
-            onNavigate={handleNavigate}
-            onEditStart={handleOpenSearchForStart}
-            onEditDestination={handleOpenSearchForDestination}
-            onCurrentLocationUpdate={updateCurrentLocation}
-            startLocation={startLocation}
-          />
-          <UserSettingsPanel
-            onModeChange={handleModeChange}
-            selectedMode={selectedMode}
-          />
-        </>
-      )}
-    </div>
+              {/* 지도 화면 (기본 화면) */}
+              {!destination && !isSearchOpen && (
+                <>
+                  <MapContainer
+                    selectedMode={selectedMode}
+                    isSearchOpen={isSearchOpen}
+                    setIsSearchOpen={setIsSearchOpen}
+                    onNavigate={handleNavigate}
+                    onEditStart={handleOpenSearchForStart}
+                    onEditDestination={handleOpenSearchForDestination}
+                    onCurrentLocationUpdate={updateCurrentLocation}
+                    startLocation={startLocation}
+                  />
+                  <UserSettingsPanel
+                    onModeChange={handleModeChange}
+                    selectedMode={selectedMode}
+                  />
+                </>
+              )}
+            </>
+          }/>
+
+          {/* 건의함 페이지 */}
+          <Route path="/suggest" element={<SuggestionsPage />} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
 
