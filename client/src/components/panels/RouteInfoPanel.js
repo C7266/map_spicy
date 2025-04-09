@@ -108,6 +108,11 @@ const RouteInfoPanel = ({
         className={`follow-button ${isFollowing ? 'active' : ''}`}
         onClick={() => onFollowToggle(!isFollowing)}
       >
+        <img 
+          src="/images/RouteSelectionScreen/normal.svg" 
+          alt="사용자" 
+          className="follow-icon"
+        />
         {isFollowing ? '따라가기 중지' : '따라가기'}
       </button>
     </div>
