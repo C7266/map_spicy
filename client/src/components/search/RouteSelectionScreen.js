@@ -18,6 +18,7 @@ const RouteSelectionScreen = ({
   const [showCCTV, setShowCCTV] = useState(false);
   const [showStores, setShowStores] = useState(false);
   const [isFollowing, setIsFollowing] = useState(false);
+  const [isLocationButtonActive, setIsLocationButtonActive] = useState(false);
   const watchPositionId = useRef(null);
 
   // 경로 타입이 변경될 때 마커를 모두 숨김
@@ -228,15 +229,21 @@ const RouteSelectionScreen = ({
             isFollowing={isFollowing}
           />
 
-          <button // 유저의 현재 위치로 화면 이동. 아직 기능은 구현 X
-            className="move-to-current-button"
+          <button
+            className={`move-to-current-button ${isLocationButtonActive ? 'active' : ''}`}
             onClick={() => {
+              setIsLocationButtonActive(true);
               if (mapServiceRef.current) {
                 mapServiceRef.current.moveToCurrentLocation();
+                
+                // 3초 후에 활성화 상태 해제
+                setTimeout(() => {
+                  setIsLocationButtonActive(false);
+                }, 3000);
               }
             }}
           >
-            <img src="/images/RouteSelectionScreen/location.svg " alt="현재 위치로 이동" />
+            <img src="/images/RouteSelectionScreen/location.svg" alt="현재 위치로 이동" />
           </button>
         </>
       )}
