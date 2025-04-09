@@ -14,7 +14,7 @@ const filterButtons = {
     { icon: '/images/icon/normal/warning.png', text: '범죄주의구간' },
   ],
   '여성': [
-    { icon: '/images/icon/women/siren.png', text: '안전비상벨' }, // 'wemen' → 'women' 오타 수정
+    { icon: '/images/icon/women/siren.png', text: '안전비상벨' },
     { icon: '/images/icon/women/cctv.png', text: 'CCTV' },
     { icon: '/images/icon/women/warning.png', text: '범죄주의구간' },
     { icon: '/images/icon/women/store.png', text: '편의점' },
@@ -23,8 +23,8 @@ const filterButtons = {
     { icon: '/images/icon/women/gong4.png', text: '공사현장' },
   ],
   '노약자': [
-    { icon: '/images/icon/old/ele.svg', text: '지하철역 엘레베이터' },
-    { icon: '/images/icon/old/drugstore.svg', text: '심야약국' },
+    { icon: '/images/icon/old/ele.png', text: '지하철역 엘레베이터' },
+    { icon: '/images/icon/old/drugstore.png', text: '심야약국' },
     { icon: '/images/icon/old/charge.png', text: '휠체어 충전소' },
     { icon: '/images/icon/old/noin.png', text: '복지시설' },
     { icon: '/images/icon/old/warning.png', text: '범죄주의구간' },
