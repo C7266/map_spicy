@@ -48,7 +48,7 @@ class RouteService {
 // 출발 도착 마커 사이즈 줄임
   calculateMarkerSize = () => {
     const zoom = this.mapInstance.getZoom();
-    const baseSize = 28;
+    const baseSize = 24;
     const scale = Math.max(0.5, Math.min(2, zoom / 12));
     return Math.round(baseSize * scale);
   };
@@ -63,7 +63,7 @@ class RouteService {
         size: new naver.maps.Size(newSize, newSize),
         scaledSize: new naver.maps.Size(newSize, newSize),
         origin: new naver.maps.Point(0, 0),
-        anchor: new naver.maps.Point(newHalf, newHalf)
+        anchor: new naver.maps.Point(newHalf, newSize * 0.8)
       });
     }
 
@@ -73,7 +73,7 @@ class RouteService {
         size: new naver.maps.Size(newSize, newSize),
         scaledSize: new naver.maps.Size(newSize, newSize),
         origin: new naver.maps.Point(0, 0),
-        anchor: new naver.maps.Point(newHalf, newHalf)
+        anchor: new naver.maps.Point(newHalf, newSize * 0.8)
       });
     }
   }
@@ -93,7 +93,7 @@ class RouteService {
           size: new naver.maps.Size(initialSize, initialSize),
           scaledSize: new naver.maps.Size(initialSize, initialSize),
           origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(initialHalf, initialHalf)
+          anchor: new naver.maps.Point(initialHalf, initialSize * 0.8)
         },
         zIndex: 50
       });
@@ -106,7 +106,7 @@ class RouteService {
           size: new naver.maps.Size(initialSize, initialSize),
           scaledSize: new naver.maps.Size(initialSize, initialSize),
           origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(initialHalf, initialHalf)
+          anchor: new naver.maps.Point(initialHalf, initialSize * 0.8)
         },
         zIndex: 50
       });
