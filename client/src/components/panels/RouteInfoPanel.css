@@ -31,10 +31,19 @@
   border: none;
   border-radius: 0;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 .follow-button:hover {
   background-color: #357ae8;
+}
+
+.follow-button.active {
+  background-color: #34A853;
+}
+
+.follow-button.active:hover {
+  background-color: #2E9648;
 }
 
 

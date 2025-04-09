@@ -11,7 +11,9 @@ const RouteInfoPanel = ({
   onCCTVToggle,
   onStoresToggle,
   showCCTV,
-  showStores
+  showStores,
+  onFollowToggle,
+  isFollowing
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const panelRef = useRef(null);
@@ -50,7 +52,7 @@ const RouteInfoPanel = ({
   return (
     <div className="route-info-panel">
       <div className="widget-scroll">
-        {routeInfo && !routeInfo.error && (
+        {routeInfo && !routeInfo.error ? (
           <>
             <div className="route-info-widget disabled"> { /* 토글 버튼으로 만들 필요 없음 */ }
               <span className="widget-label">총 거리</span>
@@ -96,15 +98,18 @@ const RouteInfoPanel = ({
               </>
             )}
           </>
-        )}
-        
-        {routeInfo?.error && (
+        ) : routeInfo?.error ? (
           <div className="route-info-widget" style={{ backgroundColor: '#fff3f3', color: '#ff0000' }}>
             <span className="widget-value">{routeInfo.error}</span>
           </div>
-        )}
+        ) : null}
       </div>
-      <button className="follow-button">따라가기</button>
+      <button 
+        className={`follow-button ${isFollowing ? 'active' : ''}`}
+        onClick={() => onFollowToggle(!isFollowing)}
+      >
+        {isFollowing ? '따라가기 중지' : '따라가기'}
+      </button>
     </div>
   );
 };
@@ -113,6 +118,8 @@ RouteInfoPanel.propTypes = {
   routeInfo: PropTypes.object,
   routeType: PropTypes.string,
   formatDistance: PropTypes.func,
+  onFollowToggle: PropTypes.func,
+  isFollowing: PropTypes.bool,
   formatTime: PropTypes.func
 };
 

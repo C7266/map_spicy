@@ -2,6 +2,10 @@
 
 class MapService {
   constructor(mapElement, initialPosition = null) {
+    if (!window.naver || !window.naver.maps) {
+      throw new Error('Naver Maps API가 로드되지 않았습니다.');
+    }
+
     this.mapInstance = new naver.maps.Map(mapElement, {
       center: initialPosition 
         ? new naver.maps.LatLng(initialPosition.latitude, initialPosition.longitude)
@@ -21,12 +25,41 @@ class MapService {
       transitionDuration: 1000,
     });
     this.currentLocationMarker = null;
+    this.lastKnownPosition = null;
+    
+    // HTML 기반 현재 위치 마커 아이콘 정의
+    this.currentLocationIcon = {
+      content: `
+        <div style="
+          width: 20px;
+          height: 20px;
+          background: #4A90E2;
+          border: 3px solid white;
+          border-radius: 50%;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+          position: relative;
+        ">
+          <div style="
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+          "></div>
+        </div>
+      `,
+      anchor: new naver.maps.Point(10, 10)
+    };
 
     naver.maps.Event.addListener(this.mapInstance, 'zoom_changed', () => {
       const zoomLevel = this.mapInstance.getZoom();
       console.log('Current zoom level:', zoomLevel);
     });
 
+    // 초기 위치 설정
     if (!initialPosition && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -34,6 +67,7 @@ class MapService {
             latitude: position.coords.latitude,
             longitude: position.coords.longitude
           };
+          this.lastKnownPosition = coords;
           this.setCurrentLocation(coords);
         },
         (error) => {
@@ -52,7 +86,23 @@ class MapService {
     return this.mapInstance;
   }
 
+  updateCurrentLocation(coords) {
+    this.lastKnownPosition = coords;
+    const position = new naver.maps.LatLng(coords.latitude, coords.longitude);
+    
+    if (!this.currentLocationMarker) {
+      this.currentLocationMarker = new naver.maps.Marker({
+        position: position,
+        map: this.mapInstance,
+        icon: this.currentLocationIcon
+      });
+    } else {
+      this.currentLocationMarker.setPosition(position);
+    }
+  }
+
   setCurrentLocation(coords) {
+    this.lastKnownPosition = coords;
     const currentPosition = new naver.maps.LatLng(
       coords.latitude,
       coords.longitude
@@ -67,16 +117,7 @@ class MapService {
     this.currentLocationMarker = new naver.maps.Marker({
       position: currentPosition,
       map: this.mapInstance,
-      icon: {
-        content: `
-          <div style="position: relative;">
-            <div style="width: 20px; height: 20px; background: #4A90E2; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-              <div style="width: 6px; height: 6px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-            </div>
-          </div>`,
-        anchor: new naver.maps.Point(10, 10)
-      },
-      zIndex: 100
+      icon: this.currentLocationIcon
     });
 
     naver.maps.Event.addListener(this.currentLocationMarker, 'click', () => {
@@ -93,6 +134,15 @@ class MapService {
       map: this.mapInstance,
       ...options
     });
+  }
+
+  panTo(coords) {
+    const position = new naver.maps.LatLng(coords.latitude, coords.longitude);
+    this.mapInstance.panTo(position);
+  }
+
+  setZoomLevel(level) {
+    this.mapInstance.setZoom(level);
   }
 
   createPolyline(path, options) {
@@ -129,34 +179,6 @@ class MapService {
     }
   }
 
-  updateCurrentLocation(coords) {
-    const currentPosition = new naver.maps.LatLng(
-      coords.latitude,
-      coords.longitude
-    );
-
-    this.mapInstance.setCenter(currentPosition);
-
-    if (this.currentLocationMarker) {
-      this.currentLocationMarker.setPosition(currentPosition);
-    } else {
-      this.currentLocationMarker = new naver.maps.Marker({
-        position: currentPosition,
-        map: this.mapInstance,
-        icon: {
-          content: `
-            <div style="position: relative;">
-              <div style="width: 20px; height: 20px; background: #4A90E2; border: 3px solid white; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                <div style="width: 6px; height: 6px; background: white; border-radius: 50%; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
-              </div>
-            </div>`,
-          anchor: new naver.maps.Point(10, 10)
-        },
-        zIndex: 100
-      });
-    }
-  }
-
   setZoom(level, useAnimation = true) {
     if (this.mapInstance) {
       if (useAnimation) {
@@ -164,6 +186,43 @@ class MapService {
       } else {
         this.mapInstance.setZoom(level, false);
       }
+    }
+  }
+
+  moveToCurrentLocation() {
+    // 마지막으로 알고 있는 위치가 있으면 즉시 이동
+    if (this.lastKnownPosition) {
+      const position = new naver.maps.LatLng(
+        this.lastKnownPosition.latitude,
+        this.lastKnownPosition.longitude
+      );
+      this.mapInstance.setCenter(position);
+      this.mapInstance.setZoom(17);
+    }
+    
+    // 현재 위치 새로 가져오기
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const coords = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+          };
+          this.lastKnownPosition = coords;
+          this.updateCurrentLocation(coords);
+          
+          const newPosition = new naver.maps.LatLng(coords.latitude, coords.longitude);
+          this.mapInstance.setCenter(newPosition);
+        },
+        (error) => {
+          console.error('현재 위치를 가져올 수 없습니다:', error);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 3000,
+          maximumAge: 0
+        }
+      );
     }
   }
 }
