@@ -142,6 +142,11 @@
   object-fit: contain;
 }
 
+/* active 클래스가 적용된 탭 내부의 아이콘 */
+.transport-tab.active .tab-icon {
+  filter: brightness(0) invert(1); /* 흰색으로 변경 */
+}
+
 .tab-text {
   font-size: 16px;
   font-weight: 500;
@@ -183,6 +188,10 @@
   width: 20px;
   height: 20px;
   object-fit: contain;
+}
+
+.tab-icon.active {
+  filter: brightness(0) invert(1); /* 흰색으로 변경 */
 }
 
 .tab-text {

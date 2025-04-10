@@ -114,7 +114,7 @@ const RouteInfoPanel = ({
            alt="사용자" 
            className="follow-icon"
          />
-         {isFollowing ? '따라가기 중지' : '따라가기'}
+         따라가기
        </button>
     </div>
   );
