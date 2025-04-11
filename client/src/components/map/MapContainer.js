@@ -7,31 +7,25 @@ import './MapContainer.css';
 // filterButtons 정의
 const filterButtons = {
   '일반': [
-    { icon: '/images/icon/normal/gong4.png', text: '공사현장' },
     { icon: '/images/icon/normal/store.png', text: '편의점' },
     { icon: '/images/icon/normal/oneonenine.png', text: '소방시설' },
     { icon: '/images/icon/normal/police.png', text: '경찰서' },
-    { icon: '/images/icon/normal/warning.png', text: '범죄주의구간' },
   ],
   '여성': [
     { icon: '/images/icon/women/siren.png', text: '안전비상벨' },
     { icon: '/images/icon/women/cctv.png', text: 'CCTV' },
-    { icon: '/images/icon/women/warning.png', text: '범죄주의구간' },
     { icon: '/images/icon/women/store.png', text: '편의점' },
     { icon: '/images/icon/women/oneonenine.png', text: '소방시설' },
     { icon: '/images/icon/women/police.png', text: '경찰서' },
-    { icon: '/images/icon/women/gong4.png', text: '공사현장' },
   ],
   '노약자': [
     { icon: '/images/icon/old/ele.png', text: '지하철역 엘레베이터' },
     { icon: '/images/icon/old/drugstore.png', text: '심야약국' },
     { icon: '/images/icon/old/charge.png', text: '휠체어 충전소' },
     { icon: '/images/icon/old/noin.png', text: '복지시설' },
-    { icon: '/images/icon/old/warning.png', text: '범죄주의구간' },
     { icon: '/images/icon/old/store.png', text: '편의점' },
     { icon: '/images/icon/old/oneonenine.png', text: '소방시설' },
     { icon: '/images/icon/old/police.png', text: '경찰서' },
-    { icon: '/images/icon/old/gong4.png', text: '공사현장' },
   ],
 };
 
