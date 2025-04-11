@@ -233,6 +233,8 @@ const RouteSelectionScreen = ({
             showStores={showStores}
             onFollowToggle={handleFollowToggle}
             isFollowing={isFollowing}
+            startLocation={startLocation}
+            destination={destination}
           />
 
           <button

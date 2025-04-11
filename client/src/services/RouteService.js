@@ -65,35 +65,34 @@ class RouteService {
     }
   }
 // 출발 도착 마커 사이즈 줄임
-  calculateMarkerSize = () => {
-    const zoom = this.mapInstance.getZoom();
-    const baseSize = 24;
-    const scale = Math.max(0.5, Math.min(2, zoom / 12));
-    return Math.round(baseSize * scale);
-  };
+  calculateMarkerSize(zoom) {
+    // 확대 수준에 따라 마커 크기 조정 (기본 크기 증가)
+    return Math.max(40, Math.round(40 * (zoom / 14)));
+  }
 
-  updateMarkers = () => {
-    const newSize = this.calculateMarkerSize();
-    const newHalf = newSize / 2;
-
+  updateMarkers() {
+    const size = this.calculateMarkerSize(this.mapInstance.getZoom());
+    
     if (this.startMarker) {
-      this.startMarker.setIcon({
+      const startIcon = {
         url: 'images/map/start.svg',
-        size: new naver.maps.Size(newSize, newSize),
-        scaledSize: new naver.maps.Size(newSize, newSize),
+        size: new naver.maps.Size(size, size),
+        scaledSize: new naver.maps.Size(size, size),
         origin: new naver.maps.Point(0, 0),
-        anchor: new naver.maps.Point(newHalf, newSize * 0.8)
-      });
+        anchor: new naver.maps.Point(size/2, size/2)
+      };
+      this.startMarker.setIcon(startIcon);
     }
-
+    
     if (this.endMarker) {
-      this.endMarker.setIcon({
+      const endIcon = {
         url: 'images/map/goal.svg',
-        size: new naver.maps.Size(newSize, newSize),
-        scaledSize: new naver.maps.Size(newSize, newSize),
+        size: new naver.maps.Size(size, size),
+        scaledSize: new naver.maps.Size(size, size),
         origin: new naver.maps.Point(0, 0),
-        anchor: new naver.maps.Point(newHalf, newSize * 0.8)
-      });
+        anchor: new naver.maps.Point(size/2, size/2)
+      };
+      this.endMarker.setIcon(endIcon);
     }
   }
 
@@ -101,7 +100,7 @@ class RouteService {
     try {
       this.clearMap();
 
-      const initialSize = this.calculateMarkerSize();
+      const initialSize = this.calculateMarkerSize(this.mapInstance.getZoom());
       const initialHalf = initialSize / 2;
 
       this.startMarker = new naver.maps.Marker({
@@ -112,7 +111,7 @@ class RouteService {
           size: new naver.maps.Size(initialSize, initialSize),
           scaledSize: new naver.maps.Size(initialSize, initialSize),
           origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(initialHalf, initialSize * 0.8)
+          anchor: new naver.maps.Point(initialHalf, initialHalf)
         },
         zIndex: 50
       });
@@ -125,12 +124,13 @@ class RouteService {
           size: new naver.maps.Size(initialSize, initialSize),
           scaledSize: new naver.maps.Size(initialSize, initialSize),
           origin: new naver.maps.Point(0, 0),
-          anchor: new naver.maps.Point(initialHalf, initialSize * 0.8)
+          anchor: new naver.maps.Point(initialHalf, initialHalf)
         },
         zIndex: 50
       });
 
-      naver.maps.Event.addListener(this.mapInstance, 'zoom_changed', this.updateMarkers);
+    
+      naver.maps.Event.addListener(this.mapInstance, 'zoom_changed', this.updateMarkers.bind(this));
 
       this.markers.push(this.startMarker, this.endMarker);
 

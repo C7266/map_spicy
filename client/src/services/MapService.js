@@ -150,9 +150,17 @@ class MapService {
     });
   }
 
-  panTo(coords) {
+  panTo(coords, zoomLevel) {
     const position = new naver.maps.LatLng(coords.latitude, coords.longitude);
-    this.mapInstance.panTo(position);
+    this.mapInstance.panTo(position, {
+      duration: 500,
+      easing: 'easeOutCubic'
+    });
+    
+    // 줌 레벨이 제공된 경우 설정
+    if (zoomLevel !== undefined) {
+      this.mapInstance.setZoom(zoomLevel, true);
+    }
   }
 
   setZoomLevel(level) {

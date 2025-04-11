@@ -1,0 +1,157 @@
+.tracking-screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+.tracking-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background-color: #006CFF;
+  color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+}
+
+.tracking-back-button {
+  background: transparent;
+  border: none;
+  padding: 8px;
+  margin-right: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  min-width: 40px;
+  flex-shrink: 0;
+}
+
+.tracking-back-button img {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1);
+}
+
+.destination-info {
+  flex: 2;
+  max-width: 70%;
+  text-align: center;
+}
+
+.destination-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  color: white;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.destination-details {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.destination-details p {
+  margin: 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-right: 12px;
+  display: flex;
+  align-items: center;
+}
+
+.destination-details p:last-child {
+  margin-right: 0;
+}
+
+.tracking-map-container {
+  flex: 1;
+  position: relative;
+  z-index: 1;
+}
+
+/* 새로운 독립적인 위치 버튼 스타일 */
+.tracking-location-btn-container {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 9999;
+}
+
+.tracking-location-btn {
+  position: relative;
+  background-color: white;
+  border: none;
+  border-radius: 50%;
+  width: 45px;
+  height: 45px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  padding: 8px;
+  transition: all 0.3s ease;
+}
+
+.tracking-location-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* 활성화된 버튼 스타일 */
+.tracking-location-btn.active {
+  background-color: #597BEB;
+}
+
+.tracking-location-btn.active img {
+  filter: brightness(0) invert(1); /* 이미지를 흰색으로 변경 */
+}
+
+/* 위치 아이콘 스타일 추가 */
+.location-marker {
+  position: relative;
+}
+
+.location-dot {
+  width: 12px;
+  height: 12px;
+  background-color: #006CFF;
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.location-pulse {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background-color: rgba(0, 108, 255, 0.15);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.header-right-space {
+  min-width: 40px;
+  flex-shrink: 0;
+} 

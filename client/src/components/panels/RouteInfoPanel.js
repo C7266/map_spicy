@@ -1,6 +1,7 @@
 // src/components/panels/RouteInfoPanel.js
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
 import './RouteInfoPanel.css';
 
 const RouteInfoPanel = ({ 
@@ -13,11 +14,14 @@ const RouteInfoPanel = ({
   showCCTV,
   showStores,
   onFollowToggle,
-  isFollowing
+  isFollowing,
+  startLocation,
+  destination
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const panelRef = useRef(null);
   const panelClassName = `route-info-panel ${routeType === 'safe' ? 'safe-mode' : ''}`;
+  const navigate = useNavigate();
 
   // 패널 클릭 시 토글
   const handlePanelClick = () => {
@@ -47,6 +51,19 @@ const RouteInfoPanel = ({
 
     document.addEventListener('touchmove', handleTouchMove);
     document.addEventListener('touchend', handleTouchEnd);
+  };
+
+  // 추적 화면으로 이동
+  const handleFollowClick = () => {
+    // 기존 따라가기 로직 대신 추적 화면으로 이동
+    navigate('/tracking', { 
+      state: { 
+        startLocation, 
+        destination, 
+        routeInfo,
+        routeType
+      } 
+    });
   };
 
   return (
@@ -107,7 +124,7 @@ const RouteInfoPanel = ({
       </div>
       <button 
          className={`follow-button ${isFollowing ? 'active' : ''}`}
-         onClick={() => onFollowToggle(!isFollowing)}
+         onClick={handleFollowClick}
        >
         <img 
            src="/images/RouteSelectionScreen/normal.svg" 
@@ -126,7 +143,9 @@ RouteInfoPanel.propTypes = {
   formatDistance: PropTypes.func,
   onFollowToggle: PropTypes.func,
   isFollowing: PropTypes.bool,
-  formatTime: PropTypes.func
+  formatTime: PropTypes.func,
+  startLocation: PropTypes.object,
+  destination: PropTypes.object
 };
 
 export default RouteInfoPanel;

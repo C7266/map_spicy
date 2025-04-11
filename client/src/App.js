@@ -9,6 +9,7 @@ import MapContainer from "./components/map/MapContainer";
 import UserSettingsPanel from "./components/panels/UserSettingsPanel";
 import RouteSelectionScreen from "./components/search/RouteSelectionScreen";
 import SearchScreen from "./components/search/SearchScreen";
+import TrackingScreen from "./components/tracking/TrackingScreen"; // 새로운 추적 화면 컴포넌트
 
 const App = () => {
   const [selectedMode, setSelectedMode] = useState('일반');
@@ -137,6 +138,9 @@ const App = () => {
 
           {/* 건의함 페이지 */}
           <Route path="/suggest" element={<SuggestionsPage />} />
+          
+          {/* 실시간 추적 화면 */}
+          <Route path="/tracking" element={<TrackingScreen />} />
         </Routes>
       </div>
     </Router>
