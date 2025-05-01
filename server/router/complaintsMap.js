@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
   } catch (error) {
     console.error('complaintsmap 조회 실패:', error);
     res.status(500).json({ error: 'DB 에러' });
-  }
+  } 
 });
 
 module.exports = router;
