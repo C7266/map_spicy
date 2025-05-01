@@ -1,7 +1,6 @@
 // src/App.js
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import SuggestionsPage from './components/pages/SuggestPage'; // 새 페이지 컴포넌트
 import "./App.css";
 
 /** 컴포넌트 import 경로 변경 */
@@ -9,7 +8,18 @@ import MapContainer from "./components/map/MapContainer";
 import UserSettingsPanel from "./components/panels/UserSettingsPanel";
 import RouteSelectionScreen from "./components/search/RouteSelectionScreen";
 import SearchScreen from "./components/search/SearchScreen";
-import TrackingScreen from "./components/tracking/TrackingScreen"; // 새로운 추적 화면 컴포넌트
+
+/** 새 페이지 컴포넌트 */
+import SuggestionsPage from './components/pages/SuggestPage';
+import AboutPage from './components/pages/AboutPage';
+import TermsPage from './components/pages/TermsPage';
+import SupportPage from './components/pages/SupportPage';
+import AdminPage from './components/pages/AdminPage';
+
+import Test from './components/pages/test';
+
+/** 새로운 추적 화면 컴포넌트 */
+import TrackingScreen from "./components/tracking/TrackingScreen";
 
 const App = () => {
   const [selectedMode, setSelectedMode] = useState('일반');
@@ -136,7 +146,6 @@ const App = () => {
             </>
           }/>
 
-          {/* ✅ SearchScreen은 경로 분리 */}
           <Route
             path="/search"
             element={
@@ -150,6 +159,14 @@ const App = () => {
 
           {/* 건의함 페이지 */}
           <Route path="/suggest" element={<SuggestionsPage />} />
+          {/* 관리자 페이지 */}
+          <Route path="/admin" element={<AdminPage />} />
+
+          {/* 새 페이지 추가 */}
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/support" element={<SupportPage />} />
+          <Route path="/test" element={<Test />} />
 
           {/* 실시간 추적 화면 */}
           <Route path="/tracking" element={<TrackingScreen />} />

@@ -6,9 +6,9 @@ const UserSettingsPanel = ({ selectedMode, onModeChange }) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const buttons = [
-    { text: '일반', icon: '/images/panel/human-male-blue.svg' },
-    { text: '여성', icon: '/images/panel/human-female-blue.svg' },
-    { text: '노약자', icon: '/images/panel/human-wheelchair-blue.svg' },
+    { text: '일반', icon: '/images/panel/human-male.png' },
+    { text: '여성', icon: '/images/panel/human-female.png' },
+    { text: '노약자', icon: '/images/panel/human-wheelchair.png' },
   ];
 
   const handleClick = (mode) => {

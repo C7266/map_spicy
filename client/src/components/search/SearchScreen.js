@@ -85,14 +85,17 @@ const SearchScreen = ({ onClose, onNavigate, isStartLocation = false }) => {
     return () => clearTimeout(delayDebounce);
   }, [searchText]);
 
+  // handleRouteSelect 함수 수정
   const handleRouteSelect = (place) => {
-    // SuggestPage에서 들어왔을 경우
     if (location.state?.fromSuggestPage) {
       navigate('/suggest', {
-        state: { selectedAddress: place.address }
+        state: { 
+          selectedAddress: place.address,
+          originalForm: location.state.originalForm // 원본 데이터 포함
+        }
       });
     } else {
-      onNavigate(place); // 기존 길찾기 기능
+      onNavigate(place);
     }
   };
 

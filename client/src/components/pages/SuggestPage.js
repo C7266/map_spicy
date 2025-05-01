@@ -2,12 +2,12 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
-import './SuggestPage.css'; // 별도 CSS 파일 생성 필요
+import './SuggestPage.css';
 
 const SuggestPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  
+
   const [formData, setFormData] = useState({
     title: '',
     category: '',
@@ -19,13 +19,29 @@ const SuggestPage = () => {
 
   const [submitted, setSubmitted] = useState(false);
 
-  // SearchScreen에서 전달된 주소를 반영
+  // 페이지 진입 시 sessionStorage에 저장된 값 불러오기
   useEffect(() => {
-    if (location.state?.selectedAddress) {
-      setFormData((prev) => ({
-        ...prev,
-        location: location.state.selectedAddress
-      }));
+    const savedForm = sessionStorage.getItem('suggestForm');
+    if (savedForm) {
+      setFormData(JSON.parse(savedForm));
+    }
+  }, []);
+
+  // formData가 변경될 때마다 sessionStorage에 저장
+  useEffect(() => {
+    sessionStorage.setItem('suggestForm', JSON.stringify(formData));
+  }, [formData]);
+
+  // SearchScreen에서 돌아온 경우 주소 값 반영
+  useEffect(() => {
+    if (location.state?.selectedAddress || location.state?.originalForm) {
+      const mergedData = {
+        ...(location.state.originalForm || {}), // 원본 데이터
+        location: location.state.selectedAddress || '' // 새 주소
+      };
+      
+      setFormData(mergedData);
+      sessionStorage.setItem('suggestForm', JSON.stringify(mergedData));
     }
   }, [location.state]);
 
@@ -38,9 +54,9 @@ const SuggestPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:3001/analyze', {
+      const response = await axios.post('http://localhost:3001/api/preprocess/analyze', {
         title: formData.title,
-        content: formData.description, // content로 보냄
+        content: formData.description,
         category: formData.category,
         location: formData.location || null
       });
@@ -48,7 +64,7 @@ const SuggestPage = () => {
       console.log('전처리 결과:', response.data.keywords);
       setSubmitted(true);
 
-      // 입력 초기화
+      // 🔸 제출 후 입력 및 저장 초기화
       setFormData({
         title: '',
         category: '',
@@ -57,12 +73,13 @@ const SuggestPage = () => {
         photos: [],
         contact: ''
       });
+      sessionStorage.removeItem('suggestForm');
 
-      setTimeout(() => setSubmitted(false), 3000);
+      alert('건의사항이 정상적으로 접수되었습니다.');
     } catch (error) {
-      console.error('건의 제출 중 오류:', error); // 원래 있던 줄
-      console.error('응답 상태 코드:', error.response?.status); // 추가
-      console.error('응답 데이터:', error.response?.data);     // 추가
+      console.error('건의 제출 중 오류:', error);
+      console.error('응답 상태 코드:', error.response?.status);
+      console.error('응답 데이터:', error.response?.data);
       alert('건의 제출에 실패했습니다.');
     }
   };
@@ -80,7 +97,7 @@ const SuggestPage = () => {
       </button>
 
       <div className="suggest-header">
-        <h1>시설물 파손 건의</h1>
+        <h1>📢 시설물 파손 건의</h1>
         <p>발견하신 시설물 문제를 신속하게 해결할 수 있도록 도와주세요</p>
       </div>
 
@@ -90,7 +107,7 @@ const SuggestPage = () => {
           <label>제목 (필수)</label>
           <input
             type="text"
-            placeholder="예) ○○아파트 1동 엘리베이터 파손"
+            placeholder="예) ○○역 n번 출구 엘리베이터 파손"
             value={formData.title}
             onChange={(e) => setFormData({ ...formData, title: e.target.value })}
             required
@@ -123,13 +140,15 @@ const SuggestPage = () => {
               placeholder="주소 또는 건물명 검색"
               value={formData.location}
               readOnly
-              onClick={() => navigate('/search', { state: { fromSuggestPage: true } })}
+              // 위치 입력 필드 onClick 핸들러 수정
+              onClick={() => navigate('/search', { 
+                state: { 
+                  fromSuggestPage: true,
+                  originalForm: formData  // 현재까지 입력된 모든 데이터 전달
+                } 
+              })}
             />
-            <button
-              type="button"
-              className="map-btn"
-              //onClick={() => alert('맵에서 지정 기능은 추후 구현됩니다')}
-            >
+            <button type="button" className="map-btn">
               🗺️ 지도에서 위치 지정
             </button>
           </div>
