@@ -25,6 +25,16 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
+// 거리를 포맷팅하는 함수 추가
+function formatDistance(distance) {
+  // 거리가 1km 이상이면 소수점 첫째 자리까지 km로 표시
+  if (distance >= 1) {
+    return `${distance.toFixed(1)}km`;
+  }
+  // 1km 미만이면 m 단위로 변환하여 표시
+  return `${Math.round(distance * 1000)}m`;
+}
+
 router.get('/', async (req, res) => {
   try {
     console.log('CCTV 데이터 요청 수신...');
@@ -45,7 +55,10 @@ router.get('/', async (req, res) => {
       )
       .map(item => ({
         latitude: item.latitude,
-        longitude: item.longitude
+        longitude: item.longitude,
+        name: `CCTV (${item.cameraCount || 1}대)`,
+        address: item.address || '주소 정보 없음',
+        purpose: item.purpose || '일반 방범용'
       }));
 
     console.log(`유효한 좌표 데이터 ${locationData.length}개 추출됨`);
@@ -58,11 +71,24 @@ router.get('/', async (req, res) => {
         console.log('유효하지 않은 좌표값. 전체 데이터 반환.');
         return res.json(locationData);
       }
-      const radius = 1; // 5km 반경
+      const radius = 1; // 1km 반경
       const nearbyLocations = locationData.filter(item => {
         const distance = calculateDistance(clientLat, clientLng, item.latitude, item.longitude);
-        return distance <= radius;
+        // 거리 정보 추가
+        if (distance <= radius) {
+          item.distance = formatDistance(distance);
+          return true;
+        }
+        return false;
       });
+      
+      // 거리별로 정렬
+      nearbyLocations.sort((a, b) => {
+        const distA = calculateDistance(clientLat, clientLng, a.latitude, a.longitude);
+        const distB = calculateDistance(clientLat, clientLng, b.latitude, b.longitude);
+        return distA - distB;
+      });
+      
       console.log(`${locationData.length}개의 CCTV 중 ${nearbyLocations.length}개가 ${radius}km 반경 내에 있습니다.`);
       return res.json(nearbyLocations);
     } else {

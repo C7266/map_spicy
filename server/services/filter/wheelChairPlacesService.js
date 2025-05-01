@@ -28,6 +28,16 @@ const calculateDistance = (lat1, lon1, lat2, lon2) => {
   return distance;
 };
 
+// 거리를 포맷팅하는 함수 추가
+const formatDistance = (distance) => {
+  // 거리가 1km 이상이면 소수점 첫째 자리까지 km로 표시
+  if (distance >= 1) {
+    return `${distance.toFixed(1)}km`;
+  }
+  // 1km 미만이면 m 단위로 변환하여 표시
+  return `${Math.round(distance * 1000)}m`;
+};
+
 const wheelChairPlacesService = {
   getWheelChairPlacesData: async (lat, lng) => {
     try {
@@ -50,10 +60,16 @@ const wheelChairPlacesService = {
           station.위도, 
           station.경도
         );
+        // 거리 정보 추가
+        station.distanceValue = distance;
+        station.distance = formatDistance(distance);
         return distance <= radius;
       });
       
       console.log(`필터링된 위치: ${nearbyLocations.length}개`);
+      
+      // 거리별로 정렬
+      nearbyLocations.sort((a, b) => a.distanceValue - b.distanceValue);
       
       // Map the data to match the expected output format
       const mappedData = nearbyLocations.map(station => ({
@@ -62,7 +78,8 @@ const wheelChairPlacesService = {
         name: station.시설명,
         address: station.소재지도로명주소,
         openingHours: `평일: ${station.평일운영시작시각}-${station.평일운영종료시각}`,
-        phoneNumber: station.관리기관전화번호
+        phoneNumber: station.관리기관전화번호,
+        distance: station.distance // 거리 정보 추가
       }));
       
       return mappedData;

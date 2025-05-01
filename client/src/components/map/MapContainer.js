@@ -118,7 +118,7 @@ const MapContainer = ({
         '경찰서': '/api/policePlaces',
         '안전비상벨': '/api/womenPlaces',
         'CCTV': '/api/cctvPlaces',
-        '심야약국': '/api/pharmacyPlaces',
+        '약국': '/api/pharmacyPlaces',
         '휠체어 충전소': '/api/wheelChairPlaces',
         '복지시설': '/api/elderlyPlaces',
       };
