@@ -319,6 +319,15 @@
     color: #666;
   }
   
+<<<<<<< HEAD
+=======
+  .list-item-visitors {
+    margin: 0;
+    font-size: 12px;
+    color: #888;
+  }
+  
+>>>>>>> letabasco/main
   /* 모바일 최적화 */
   @media (max-width: 768px) {
     .header {

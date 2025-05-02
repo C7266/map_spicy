@@ -1,4 +1,4 @@
-/* global naver */
+
 /* NaverMap */
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -131,6 +131,7 @@ const NaverMap = ({ selectedMode, activeFilters, setActiveFilters, onFilterClick
     };
   }, [onCurrentLocationUpdate, mapServiceRef]);
 
+ 
   // 필터 변경 감지 및 마커 업데이트
   useEffect(() => {
     if (!mapService.current || !markerService.current || !isMapReady) return;

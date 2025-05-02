@@ -267,6 +267,7 @@ class MapService {
   getCurrentLocation() {
     return this.lastKnownPosition;
   }
+
 }
 
 export default MapService;

@@ -25,6 +25,7 @@ function deg2rad(deg) {
   return deg * (Math.PI / 180);
 }
 
+
 // 거리를 포맷팅하는 함수 추가
 function formatDistance(distance) {
   // 거리가 1km 이상이면 소수점 첫째 자리까지 km로 표시
@@ -59,6 +60,7 @@ router.get('/', async (req, res) => {
         name: `CCTV (${item.cameraCount || 1}대)`,
         address: item.address || '주소 정보 없음',
         purpose: item.purpose || '일반 방범용'
+
       }));
 
     console.log(`유효한 좌표 데이터 ${locationData.length}개 추출됨`);
@@ -71,6 +73,7 @@ router.get('/', async (req, res) => {
         console.log('유효하지 않은 좌표값. 전체 데이터 반환.');
         return res.json(locationData);
       }
+
       const radius = 1; // 1km 반경
       const nearbyLocations = locationData.filter(item => {
         const distance = calculateDistance(clientLat, clientLng, item.latitude, item.longitude);
@@ -89,6 +92,7 @@ router.get('/', async (req, res) => {
         return distA - distB;
       });
       
+
       console.log(`${locationData.length}개의 CCTV 중 ${nearbyLocations.length}개가 ${radius}km 반경 내에 있습니다.`);
       return res.json(nearbyLocations);
     } else {

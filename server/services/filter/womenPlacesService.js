@@ -38,6 +38,7 @@ const formatDistance = (distance) => {
   return `${Math.round(distance * 1000)}m`;
 };
 
+
 const womenPlacesService = {
   getWomenPlacesData: async (lat, lng) => {
     try {
@@ -63,21 +64,26 @@ const womenPlacesService = {
         // 거리 정보 추가
         bell.distanceValue = distance;
         bell.distance = formatDistance(distance);
+
         return distance <= radius;
       });
       
       console.log(`필터링된 위치: ${nearbyLocations.length}개`);
       
+
       // 거리별로 정렬
       nearbyLocations.sort((a, b) => a.distanceValue - b.distanceValue);
       
+
       // Map the data to match the expected output format
       const mappedData = nearbyLocations.map(bell => ({
         latitude: bell.WGS84위도,
         longitude: bell.WGS84경도,
         name: bell.설치위치,
+
         address: bell.소재지도로명주소 || bell.소재지지번주소,
         distance: bell.distance // 거리 정보 추가
+
       }));
       
       return mappedData;

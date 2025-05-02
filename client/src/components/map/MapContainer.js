@@ -32,7 +32,9 @@ const filterButtons = {
 };
 
 // API 호출을 위한 기본 URL
-const API_BASE_URL = 'http://localhost:3001'; // 개발 환경에서는 localhost 사용
+
+const API_BASE_URL = 'http://15.164.94.96:3001'; // 개발 환경에서는 localhost 사용
+
 
 const MapContainer = ({ 
   selectedMode, 
@@ -64,6 +66,7 @@ const MapContainer = ({
     console.log(`${category} 데이터 요청 시작...`);
     
     try {
+
       // 현재 지도 중심 위치 가져오기 (사용자 GPS 위치 대신)
       let latitude = 35.8533;  // 기본 위치
       let longitude = 128.4897;  // 기본 위치
@@ -86,6 +89,7 @@ const MapContainer = ({
         }
       }
       
+
       // 지하철역 엘리베이터 또는 외국인 주의구역인 경우 placesApi에서 직접 데이터 가져오기
       if (category === '지하철역 엘리베이터' || category === '외국인 주의구역') {
         // placesApi의 getPlacesForFilter 함수를 가져오기
@@ -414,6 +418,7 @@ const MapContainer = ({
                           {item.address}
                         </p>
                       )}
+
                       {item.phone && item.phone !== '' && (
                         <p className="list-item-phone">전화: {item.phone}</p>
                       )}
